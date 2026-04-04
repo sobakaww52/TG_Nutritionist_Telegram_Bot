@@ -1,0 +1,19 @@
+services:
+  db:
+      image: postgres:18
+      container_name: postgres_db
+      environment:
+        POSGRES_PASSWORD: ${DB_PASS}
+        POSGRES_USER: ${DB_USER}
+        POSGRES_DB: ${DB_NAME}
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U $${POSTGES_USER} -d $${POSTGRES_DB}"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+      ports:
+      - "5432:5432"
+      volumes:
+        - db-data:/var/lib/postgresql/data
+volumes:
+  db-data:
