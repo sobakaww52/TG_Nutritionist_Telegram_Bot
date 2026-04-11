@@ -18,21 +18,16 @@ async def comm_start(message: types.Message):
         db_user = result.scalar_one_or_none()
 
         if not db_user:
-            
             db_user = User(
                 telegram_id=message.from_user.id,
-                username=message.from_user.username,
-                first_name=message.from_user.first_name
+                tg_username=message.from_user.username
             )
-            
             session.add(db_user)
-            
             await session.commit()
-            
-            text = f"Приятно познакомиться, {message.from_user.first_name}! Ты внесен в базу клиентов."
+            text = f"Приятно познакомиться! Ты в базе."
         else:
             
-            text = f"Рад видеть тебя снова, {message.from_user.first_name}!"
+            text = f"Рад видеть тебя снова!"
 
     
     await message.answer(text)

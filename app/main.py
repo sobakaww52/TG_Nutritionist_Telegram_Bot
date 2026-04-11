@@ -20,10 +20,10 @@ dp.include_router(user_router)
 async def lifespan(app: FastAPI):
     await init_db()
 
-    webhook_url = f"{settings.DOMAIN}/webhook/{settings.BOT_MAIN}"
+    webhook_url_main = f"{settings.DOMAIN}/webhook/{settings.BOT_MAIN}"
     
     await bot.set_webhook(
-        url=webhook_url,
+        url=webhook_url_main,
         drop_pending_updates=True,
         allowed_updates=["message", "callback_query"]
     )
@@ -37,8 +37,8 @@ app = FastAPI(lifespan=lifespan)
 
 
 #коррекция этой функции, связь webhook и aiogram
-@app.post("/webhook/{bot_id}")
-async def bot_webhook(request: Request, bot_id: str):
+@app.post("/webhook/{BOT_MAIN}")
+async def bot_webhook(request: Request, BOT_MAIN: str):
 
     update_data = await request.json()
     
