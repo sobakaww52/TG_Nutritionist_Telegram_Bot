@@ -8,16 +8,19 @@ from aiogram.enums import ParseMode
 
 from app.config import settings
 from app.database import init_db
+from app.bots.main.headers.users_router import router as user_router
 
 bot = Bot(token=settings.BOT_MAIN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-
 dp = Dispatcher()
+
+dp.include_router(user_router)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
 
-    webhook_url = f"{settings.DOMAIN}/webhook"
+    webhook_url = f"{settings.DOMAIN}/webhook/{settings.BOT_MAIN}"
     
     await bot.set_webhook(
         url=webhook_url,
@@ -32,8 +35,10 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-@app.post("/webhook")
-async def bot_webhook(request: Request):
+
+#коррекция этой функции, связь webhook и aiogram
+@app.post("/webhook/{bot_id}")
+async def bot_webhook(request: Request, bot_id: str):
 
     update_data = await request.json()
     
