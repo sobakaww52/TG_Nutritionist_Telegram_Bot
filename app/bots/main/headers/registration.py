@@ -1,5 +1,6 @@
 from aiogram import Router, types, F
 from aiogram.fsm.context import FSMContext
+from sqlmodel import select
 from app.bots.main.states import RegistrationUsers
 from app.models.users import User
 from sqlalchemy.ext.asyncio import async_sessionmaker
@@ -10,9 +11,22 @@ router = Router()
 @router.callback_query(F.data == "start_registration")
 async def start_survey(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
-    await callback.message.answer("Введите ваш возраст:")
-    await state.set_state(RegistrationUsers.age)
+    await callback.message.answer("Введите ваше имя:")
+    await state.set_state(RegistrationUsers.first_name)
 
+@router.message(RegistrationUsers.first_name)
+async def process_age(message: types.Message, state: FSMContext):
+    try:
+        first_name_str  = str(message.text)
+        await state.update_data(first_name=first_name_str)
+        await message.answer("Принято, теперь напиши мне свой возраст: ")
+        await state.set_state(RegistrationUsers.age)
+
+
+    except ValueError:
+        await message.answer(
+            "Извини, введите корректное имя. 🧐 Например(Артем)\n")
+        
 @router.message(RegistrationUsers.age)
 async def process_age(message: types.Message, state: FSMContext):
     try:
@@ -28,6 +42,7 @@ async def process_age(message: types.Message, state: FSMContext):
         await message.answer(
             "Извини, но это не похоже на число. 🧐\n"
             "Пожалуйста, введи только цифры (например: 35)")
+
 
 @router.message(RegistrationUsers.height)
 async def process_height(message: types.Message, state: FSMContext):
@@ -56,19 +71,19 @@ async def process_weight(message: types.Message, state: FSMContext):
 
     
         user_data = await state.get_data()
-    
-        async with async_session() as session:
 
-            new_user = User(
-                telegram_id=message.from_user.id,
-                tg_username=message.from_user.username,
-                age=user_data.get("age"),
-                height=user_data.get("height"),
-                weight=user_data.get("weight"),
-            )
+        async with async_session() as session:
+                new_user = User(
+                    telegram_id=message.from_user.id,
+                    tg_username=message.from_user.username,
+                    first_name=user_data.get("first_name"),
+                    age=user_data.get("age"),
+                    height=user_data.get("height"),
+                    weight=user_data.get("weight"),
+                )
             
-            session.add(new_user)
-            await session.commit()
+        session.add(new_user)
+        await session.commit()
         
         await state.clear() 
         await message.answer("✅ Анкета успешно сохранена! Данные уже в базе.")

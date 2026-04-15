@@ -7,15 +7,19 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
 from app.config import settings
-from app.database import init_db
+from app.database import init_db, engine
 from app.bots.main.headers.started_router import router as user_router
 from app.bots.main.headers.registration import router as registration_router
+from app.admin import setup_admin
 
 bot = Bot(token=settings.BOT_MAIN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
 
 dp.include_router(user_router)
 dp.include_router(registration_router)
+
+
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -56,6 +60,9 @@ async def index():
         "bot_info": "NutriBot is active",
         "domain": settings.DOMAIN
     }
+
+setup_admin(app, engine)
+
 
 
 if __name__ == "__main__":
