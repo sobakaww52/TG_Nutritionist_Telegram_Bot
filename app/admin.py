@@ -4,7 +4,7 @@ from app.models.users import User
 
 
 class UserAdmin(ModelView, model=User):
-    column_list=[User.id, User.first_name, User.tg_username, User.age, User.height, User.weight]
+    column_list=[User.id, User.fio, User.mail, User.tg_username, User.age, User.height, User.weight, User.weight_loss, User.improve_ment, User.mode]
     column_searchable_list = [User.tg_username]
     name = "Нового клиента"
     name_plural = "БАЗА КЛИЕНТОВ"
