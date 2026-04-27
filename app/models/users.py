@@ -29,10 +29,12 @@ class Weightloss (SQLModel, table=True):
     id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
     users_tg: int = Field(foreign_key="users.telegram_id")
 
+    tg_username: Optional[str] = Field(default=None)
+    weight_loss: Optional[bool] = Field(default=None)
     how_kg: Optional[int] = Field(default=None)
     how_eat: Optional[int] = Field(default=None, max_length=10)
     how_active: Optional[int] = Field(default=None)
-    how_water: Optional[int] = Field(default=None)
+    how_water: Optional[str] = Field(default=None)
     how_sleep: Optional[str] = Field(default=None)
 
 class Improvement (SQLModel, table=True):
@@ -40,8 +42,10 @@ class Improvement (SQLModel, table=True):
     __tablename__ = "improvement"
 
     id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
-    users_tg: int = Field(foreign_key="users.telegram_id")
-
+    users_tg: int = Field(foreign_key="users.telegram_id") 
+    
+    tg_username: Optional[str] = Field(default=None)
+    improve_ment: Optional[bool] = Field(default=None) 
     problem: str = Field(default=None)
 
 class Modes (SQLModel, table=True):
@@ -50,10 +54,12 @@ class Modes (SQLModel, table=True):
     id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
     users_tg: int = Field(foreign_key="users.telegram_id")
 
-    have_kg: Optional[int] = Field(default=None)
+    tg_username: Optional[str] = Field(default=None)
+    mode: Optional[bool] = Field(default=None)
+    have_kg: Optional[str] = Field(default=None)
     how_eat: Optional[int] = Field(default=None, max_length=10)
     how_active: Optional[int] = Field(default=None)
-    how_water: Optional[int] = Field(default=None)
+    how_water: Optional[str] = Field(default=None)
     how_sleep: Optional[str] = Field(default=None)
 
 

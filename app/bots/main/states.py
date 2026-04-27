@@ -7,19 +7,19 @@ class RegistrationUsers(StatesGroup):
     weight = State()
     mail = State()
 
-class RegistrationWeightless(StatesGroup):
+class RegistrationWeightloss(StatesGroup):
     how_kg = State()
-    how_eat = State()
-    how_active = State()
-    how_water = State()
-    how_sleep = State()
+    how_eat_loss = State()
+    how_active_loss = State()
+    how_water_loss = State()
+    how_sleep_loss = State()
 
 class RegistationImprovement(StatesGroup):
     problem = State()
 
 class RegistationMode(StatesGroup):
     have_kg = State()
-    how_eat = State()
-    how_active = State()
-    how_water = State()
-    how_sleep = State()
+    how_eat_mode = State()
+    how_active_mode = State()
+    how_water_mode = State()
+    how_sleep_mode = State()

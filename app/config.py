@@ -8,6 +8,10 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_NAME: str
 
+    ADMIN_LOGIN: str
+    ADMIN_PASSWORD: str
+    SECRET_KEY: str
+    
     BOT_MAIN: str
     DOMAIN: str
     
