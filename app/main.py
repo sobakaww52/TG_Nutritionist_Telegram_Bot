@@ -2,9 +2,8 @@ import uvicorn
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
-from aiogram import Dispatcher, Bot, types
-from aiogram.client.default import DefaultBotProperties
-from aiogram.enums import ParseMode
+from aiogram import Dispatcher, types
+from starlette.staticfiles import StaticFiles
 
 from app.config import settings
 from app.database import init_db, engine
@@ -12,10 +11,10 @@ from app.bots.main.headers.started_router import router as user_router
 from app.bots.main.headers.registration import router as registration_router
 from app.bots.main.headers.other_message import router as other_massage_router
 from app.bots.main.services.show_profile import router as my_profile
-
+from app.bot_instance import bot
 from app.admin import setup_admin
 
-bot = Bot(token=settings.BOT_MAIN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+
 dp = Dispatcher()
 
 dp.include_router(user_router)
@@ -45,7 +44,6 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
-
 @app.post("/webhook/{BOT_MAIN}")
 async def bot_webhook(request: Request, BOT_MAIN: str):
 
@@ -64,6 +62,8 @@ async def index():
         "bot_info": "NutriBot is active",
         "domain": settings.DOMAIN
     }
+
+app.mount("/admin/static", StaticFiles(directory="app/admin/static"), name="admin_static")
 
 setup_admin(app, engine)
 

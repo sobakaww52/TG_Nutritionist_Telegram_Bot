@@ -11,6 +11,10 @@ def get_start_keyboard() -> InlineKeyboardMarkup:
         InlineKeyboardButton(text="👤 Моя анкета", callback_data="my_profile")
     )
     
+    builder.row(
+         InlineKeyboardButton(text="📢 Мой канал", url="https://t.me/my_way_Nutritionist")
+    )
+    
 
     return builder.as_markup()
 

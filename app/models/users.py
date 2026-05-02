@@ -2,6 +2,7 @@ from sqlmodel import SQLModel, Field
 from typing import Optional
 from sqlalchemy import BigInteger
 from uuid import UUID, uuid4
+from datetime import datetime
 
 class User(SQLModel, table=True):
 
@@ -21,6 +22,9 @@ class User(SQLModel, table=True):
     weight_loss: Optional[bool] = Field(default=False)
     improve_ment: Optional[bool] = Field(default=False)
     mode: Optional[bool] = Field(default=False)
+
+    created_at: datetime = Field(default_factory=datetime.now)
+    
 
 class Weightloss (SQLModel, table=True):
     

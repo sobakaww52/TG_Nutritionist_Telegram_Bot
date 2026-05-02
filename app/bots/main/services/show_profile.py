@@ -1,17 +1,17 @@
 from aiogram import types, F, Router
 from aiogram.fsm.context import FSMContext
 from sqlmodel import select, delete
-from sqlalchemy.ext.asyncio import async_sessionmaker
+
 
 from app.models.users import User, Weightloss, Modes, Improvement
 from app.bots.main.keyboards.inlines import get_start_keyboard
 from app.bots.main.services.clean_chat import clean_chat
-from app.database import engine
+from app.database import async_session, engine
 from app.bots.main.keyboards.inlines import delete_registr
+
 router = Router()
 
 
-async_session = async_sessionmaker(bind=engine, expire_on_commit=False)
 @router.callback_query(F.data == "my_profile")
 async def show_my_profile(callback: types.CallbackQuery, state: FSMContext):
 
@@ -24,7 +24,7 @@ async def show_my_profile(callback: types.CallbackQuery, state: FSMContext):
         user = user_res.scalar_one_or_none()
 
         if not user:
-            sent_msg = await callback.message.answer("Вы еще не прошли анкету.")
+            sent_msg = await callback.message.answer("Вы еще не прошли анкету. /start")
             await state.update_data(last_msg_id=sent_msg.message_id)
             return
         if user:
@@ -115,15 +115,42 @@ async def delete_profile_handler(callback: types.CallbackQuery, state: FSMContex
 
 @router.callback_query(F.data == "back_to_main_fst")
 async def back_to_main_handler(callback: types.CallbackQuery, state: FSMContext):
-    await callback.answer()
+    async with async_session() as session:
+        result = await session.exec(select(User).where(User.telegram_id == callback.from_user.id))
+        user = result.first()
 
-    sent_msg = await callback.message.edit_text(
-        f"Привет👋, меня зовут Ковыршина Валерия! \n\n"
-        "Я професcиональный нутрициолог, это мой бот(помощник) который будет присылать вам полезные советы " \
-        "и служит для анкетирования и записи моих клиентов, также ты можешь попробовать заполнить анкету, если тебе вдруг интересно работать со мной в будущем \n\n"
-        "Я помогу тебе следить за питанием. Для начала нужно заполнить анкету.\n",
-        reply_markup=get_start_keyboard()
-    )
+    if not user:
+        text = f"""Здравствуйте! Благодарю за проявленный интерес к моему боту — это первый шаг к осознанному отношению к своему здоровью. 
+
+Закрепите бота в своём чате, чтобы регулярно получать:
+
+• актуальную информацию о профильных мероприятиях (вебинары, мастер‑классы, эфиры);
+
+• научно обоснованные статьи по нутрициологии: разбор макро‑ и микронутриентов, их роли в поддержании энергии, качества сна и молодости организма;
+
+• практические гайды: как составить сбалансированный рацион, оптимизировать режим дня и повысить качество жизни;
+
+• эксклюзивные приглашения на образовательные события.
+
+Составляй быстрее анкету, начни наполнятся энергией и двигаться к долгосрочным результатам — с заботой и наукой на вашей стороне 👇 """     
+    
+    else:
+        text = f"""Здравствуйте {user.fio}!👋
+
+Не забудьте закрепить бота в чате, чтобы получать:
+
+• анонсы вебинаров, мастер‑классов и эфиров;
+
+• полезные статьи о нутрициологии и питании;
+
+• гайды по сбалансированному рациону и режиму дня;
+
+• приглашения на эксклюзивные события.
+
+Будем ставить фокус — на питании, восстановлении, энергии и долгосрочных результатах для вашего здоровья."""
+    if not await clean_chat(callback, state):
+        return   
+    sent_msg = await callback.message.edit_text(text, reply_markup=get_start_keyboard())                
     await state.update_data(last_msg_id=sent_msg.message_id)
 
 

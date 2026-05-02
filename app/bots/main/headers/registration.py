@@ -17,7 +17,6 @@ router = Router()
 
 @router.callback_query(F.data == "start_registration")
 async def start_survey_first(callback: types.CallbackQuery, state: FSMContext):
-    await callback.message.delete()
     if not await clean_chat(callback, state):
         return
     async with async_session() as session:
@@ -26,7 +25,6 @@ async def start_survey_first(callback: types.CallbackQuery, state: FSMContext):
         user = result.scalar_one_or_none()
 
         if user:
-            # 
             sent_msg = await callback.message.answer(
                 "<b>У вас уже есть заполненная анкета!</b>\n\n"
                 "Чтобы заполнить её заново, сначала удалите старую анкету в разделе «Моя анкета». /start",

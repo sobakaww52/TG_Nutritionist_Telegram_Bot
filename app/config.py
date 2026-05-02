@@ -11,7 +11,8 @@ class Settings(BaseSettings):
     ADMIN_LOGIN: str
     ADMIN_PASSWORD: str
     SECRET_KEY: str
-    
+    ADMIN_ID: int
+
     BOT_MAIN: str
     DOMAIN: str
     
