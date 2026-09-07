@@ -55,5 +55,55 @@
 ### 2. Клонирование репозитория
 
 ```bash
+
 git clone [https://github.com/sobakaww52/tg_nutr.git](https://github.com/sobakaww52/tg_nutr.git)
 cd tg_nutr
+
+```
+### 3. Настройка окружения
+
+Создайте файл .env на основе примера .env.example:
+
+```bash
+cp .env.example .env
+```
+Заполните переменные окружения в .env:
+
+```Фрагмент кода
+
+# Telegram Bot
+BOT_TOKEN=your_telegram_bot_token_here
+
+# Database Settings
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=tg_nutr
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+
+# Admin / Web App
+SECRET_KEY=your_super_secret_key_here
+```
+
+### 4. Запуск через Docker Compose (Рекомендуется)
+
+```bash
+docker compose up -d --build
+```
+
+## 📂 Структура проекта
+```
+tg_nutr/
+├── app/
+│   ├── admin/          # Настройки и представления sqladmin
+│   ├── bot/            # Хэндлеры, мидлвари, клавиатуры aiogram 3.x
+│   ├── core/           # Конфигурация, базы данных, сессии
+│   ├── models/         # Модели SQLModel / Pydantic v2
+│   └── services/       # Бизнес-логика (расчет КБЖУ, подписки)
+├── tests/              # Набор автотестов (pytest)
+├── Dockerfile
+├── docker-compose.yml
+├── pyproject.toml      # Зависимости и конфигурация uv
+└── README.md
+```
+
